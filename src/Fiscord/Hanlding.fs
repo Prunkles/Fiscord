@@ -10,10 +10,10 @@ module DiscordHandlers =
         
     let earlyReturn ctx : DiscordFuncResult = task { return Some ctx } 
 
-    let messageReceived (onMessageRecieved: SocketMessage -> DiscordHandler) : DiscordHandler =
+    let messageReceived (onMessageReceived: SocketMessage -> DiscordHandler) : DiscordHandler =
         fun next ctx ->
             match ctx.Event with
-            | DiscordEvent.MessageReceived msg -> onMessageRecieved msg next ctx
+            | DiscordEvent.MessageReceived msg -> onMessageReceived msg next ctx
             | _ -> skipPipeline
 
     let sendMessageToChannel (msg: string) (channel: ISocketMessageChannel) : DiscordHandler =

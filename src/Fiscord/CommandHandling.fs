@@ -10,6 +10,8 @@ type CommandHandlerState =
 
 type CommandHandler = CommandHandlerState -> MessageHandler * CommandHandlerState
 
+
+
 module MessageHandlers =
     
     type private TokenParsingState =
@@ -45,11 +47,16 @@ module MessageHandlers =
             msgHandler msg
 
     let commands (cmdHandlers: CommandHandler seq) : MessageHandler =
-        command (fun state ->
-            let messageHandlers = cmdHandlers |> Seq.map (fun cmdHandler -> cmdHandler state |> fst)
-            MessageHandlers.choose messageHandlers, state
-            // TODO: Don't discard state for successful command
-        )
+//        command (fun state ->
+//            let messageHandlers = cmdHandlers |> Seq.map (fun cmdHandler -> cmdHandler state |> fst)
+//            MessageHandlers.choose messageHandlers, state
+//            // TODO: Don't discard state for successful command
+////            let rec handle (cmdHandlers: CommandHandler list) state =
+////                ()
+////            ()
+//        )
+        let msgHandlers = cmdHandlers |> Seq.map command
+        MessageHandlers.choose msgHandlers
 
 module CommandHandlers =
     
@@ -79,3 +86,29 @@ module CommandHandlers =
 
     let subCommands (pattern: string) (innerCmdHandlers: CommandHandler seq) : CommandHandler =
         subCommand pattern (fun state -> MessageHandlers.commands innerCmdHandlers, state)
+//            let rec handle (innerCmdHandlers: CommandHandler list) : MessageHandler * CommandHandlerState =
+//                match innerCmdHandlers with
+//                | [] -> ()
+//                | cmdHandler :: tail ->
+//                    let msgHandler, newState = cmdHandler state
+//                    
+//                    ()
+//            handle (List.ofSeq innerCmdHandlers)
+        
+
+// DiscordHandler => MessageHandler => CommandHandler => MessageHandler
+(*
+commands [
+    let command = 
+        subCommands "music" [
+            command1 "play" (fun arg -> playMusic arg) >=> ...
+            command0 "stop" (stopMusic: MessageHandler)
+        ]
+    command >=> ...
+]
+
+music play URL in CHID
+music stop in CHID
+
+
+*)
