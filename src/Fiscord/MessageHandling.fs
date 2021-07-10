@@ -24,3 +24,7 @@ module MessageHandlers =
         fun msg ->
             let handlers = msgHandlers |> Seq.map (fun h -> h msg)
             DiscordHandlers.choose handlers
+
+module Operators =
+    
+    let ( >=> ) h1 h2 = MessageHandlers.compose h1 h2
